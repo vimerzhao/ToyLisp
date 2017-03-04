@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "redefine.h"
 
 #define BUFFER_SIZE 2048
 
@@ -9,10 +10,10 @@
 static char buffer[BUFFER_SIZE];
 
 /* Fake readline function */
-char* readline(char* prompt) {
+string readline(string prompt) {
     fputs(prompt, stdout);
     fgets(buffer, BUFFER_SIZE, stdin);
-    char* cpy = malloc(strlen(buffer) + 1);
+    string cpy = malloc(strlen(buffer) + 1);
     strcpy(cpy, buffer);
     cpy[strlen(cpy) - 1] = '\0';
     return cpy;
@@ -30,7 +31,7 @@ int main(int argc, char const* argv[]) {
     puts("Press Ctrl+c to Exit\n");
 
     while (1) {
-        char* input = readline("ToyLisp>");
+        string input = readline("ToyLisp>");
         add_history(input);
 
         printf("%s\n", input);
