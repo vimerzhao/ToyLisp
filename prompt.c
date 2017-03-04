@@ -8,6 +8,7 @@
 
 static char buffer[BUFFER_SIZE];
 
+/* Fake readline function */
 char* readline(char* prompt) {
     fputs(prompt, stdout);
     fgets(buffer, BUFFER_SIZE, stdin);
@@ -16,6 +17,8 @@ char* readline(char* prompt) {
     cpy[strlen(cpy) - 1] = '\0';
     return cpy;
 }
+
+/* Fake add_history function */
 void add_history(char* unused) {}
 #else
 #include <editline/readline.h>
