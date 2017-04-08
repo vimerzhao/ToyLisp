@@ -25,6 +25,7 @@ struct lval;
 struct lenv;
 typedef struct lval lval;
 typedef struct lenv lenv;
+
 /* Parser Declariations */
 mpc_parser_t* Number;
 mpc_parser_t* Symbol;
@@ -717,6 +718,73 @@ lval* builtin_put(lenv* e, lval* a) {
     return builtin_var(e, a, "=");
 }
 
+lval* lval_read(mpc_ast_t*);
+
+
+lval* builtin_load(lenv* e, lval* a) {
+    LASSERT_NUM("load", a, 1);
+    LASSERT_TYPE("load", a, 0, LVAL_STR);
+
+    /* Parse File given by string name */
+    mpc_result_t r;
+    if (mpc_parse_contents(a->cell[0]->str, Lispy, &r)) {
+
+        /* Read contents */
+        lval* expr = lval_read(r.output);
+        mpc_ast_delete(r.output);
+
+        /* Evaluate each Expression */
+        while (expr->count) {
+            lval* x = lval_eval(e, lval_pop(expr, 0));
+            /* If Evaluation leads to error print it */
+            if (x->type == LVAL_ERR) { lval_println(x); }
+            lval_del(x);
+        }
+
+        /* Delete expressions and arguments */
+        lval_del(expr);
+        lval_del(a);
+
+        /* Return empty list */
+        return lval_sexpr();
+
+    } else {
+        /* Get Parse Error as String */
+        char* err_msg = mpc_err_string(r.error);
+        mpc_err_delete(r.error);
+
+        /* Create new error message using it */
+        lval* err = lval_err("Could not load Library %s", err_msg);
+        free(err_msg);
+        lval_del(a);
+
+        /* Cleanup and return error */
+        return err;
+    }
+}
+lval* builtin_print(lenv* e, lval* a) {
+    /* Print each argument followed by a space */
+    for (int i = 0; i < a->count; i++) {
+        lval_print(a->cell[i]); putchar(' ');
+    }
+
+    /* Print a newline and delete arguments */
+    putchar('\n');
+    lval_del(a);
+
+    return lval_sexpr();
+}
+
+lval* builtin_error(lenv* e, lval* a) {
+    LASSERT_NUM("error", a, 1);
+    LASSERT_TYPE("error", a, 0, LVAL_STR);
+    /* Construct Error from first argument */
+    lval* err = lval_err(a->cell[0]->str);
+
+    lval_del(a);
+    return err;
+}
+
 void lenv_add_builtin(lenv* e, char* name, lbuiltin func) {
     lval* k = lval_sym(name);
     lval* v = lval_fun(func);
@@ -729,6 +797,10 @@ void lenv_add_builtins(lenv* e) {
     lenv_add_builtin(e, "\\",  builtin_lambda);
     lenv_add_builtin(e, "def", builtin_def);
     lenv_add_builtin(e, "=", builtin_put);
+    /* String Functions */
+    lenv_add_builtin(e, "load", builtin_load);
+    lenv_add_builtin(e, "error", builtin_error);
+    lenv_add_builtin(e, "print", builtin_print);
     /* List Functions */
     lenv_add_builtin(e, "list", builtin_list);
     lenv_add_builtin(e, "head", builtin_head);
@@ -939,32 +1011,47 @@ int main(int argc, char** argv) {
             ",
             Number, Symbol, String, Comment, Sexpr, Qexpr, Expr, Lispy);
 
-    puts("Lispy Version0.7");
-    puts("Press Ctrl+C to Exit\n");
-
     lenv* e = lenv_new();
     lenv_add_builtins(e);
+    if (1 == argc) {
+        puts("Lispy Version0.7");
+        puts("Press Ctrl+C to Exit\n");
+        while (1) {
 
-    while (1) {
+            char* input = readline("lispy> ");
+            add_history(input);
 
-        char* input = readline("lispy> ");
-        add_history(input);
+            mpc_result_t r;
+            if (mpc_parse("<stdin>", input, Lispy, &r)) {
+                lval* x = lval_eval(e, lval_read(r.output));
+                lval_println(x);
+                lval_del(x);
+                mpc_ast_delete(r.output);
+            } else {
+                mpc_err_print(r.error);
+                mpc_err_delete(r.error);
+            }
 
-        mpc_result_t r;
-        if (mpc_parse("<stdin>", input, Lispy, &r)) {
-            lval* x = lval_eval(e, lval_read(r.output));
-            lval_println(x);
-            lval_del(x);
-            mpc_ast_delete(r.output);
-        } else {
-            mpc_err_print(r.error);
-            mpc_err_delete(r.error);
+            free(input);
+
         }
-
-        free(input);
-
     }
+    if (argc >= 2) {
 
+        /* loop over each supplied filename (starting from 1) */
+        for (int i = 1; i < argc; i++) {
+
+            /* Argument list with a single argument, the filename */
+            lval* args = lval_add(lval_sexpr(), lval_str(argv[i]));
+
+            /* Pass to builtin load and get the result */
+            lval* x = builtin_load(e, args);
+
+            /* If the result is an error be sure to print it */
+            if (x->type == LVAL_ERR) { lval_println(x); }
+            lval_del(x);
+        }
+    }
     lenv_del(e);
 
     mpc_cleanup(8, Number, Symbol, String, Comment, Sexpr, Qexpr, Expr, Lispy);
