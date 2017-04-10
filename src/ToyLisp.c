@@ -34,7 +34,7 @@ mpc_parser_t* Comment;
 mpc_parser_t* Sexpr;
 mpc_parser_t* Qexpr;
 mpc_parser_t* Expr;
-mpc_parser_t* Lispy;
+mpc_parser_t* ToyLisp;
 
 /* Lisp Value */
 enum { LVAL_ERR, LVAL_NUM,   LVAL_SYM, LVAL_STR,
@@ -727,7 +727,7 @@ lval* builtin_load(lenv* e, lval* a) {
 
     /* Parse File given by string name */
     mpc_result_t r;
-    if (mpc_parse_contents(a->cell[0]->str, Lispy, &r)) {
+    if (mpc_parse_contents(a->cell[0]->str, ToyLisp, &r)) {
 
         /* Read contents */
         lval* expr = lval_read(r.output);
@@ -995,7 +995,7 @@ int main(int argc, char** argv) {
     Sexpr  = mpc_new("sexpr");
     Qexpr  = mpc_new("qexpr");
     Expr   = mpc_new("expr");
-    Lispy  = mpc_new("lispy");
+    ToyLisp  = mpc_new("ToyLisp");
 
     mpca_lang(MPCA_LANG_DEFAULT,
             "                                                   \
@@ -1007,22 +1007,22 @@ int main(int argc, char** argv) {
             qexpr  : '{' <expr>* '}' ;                          \
             expr   : <number> | <symbol> | <sexpr>              \
                    | <qexpr>  | <string> | <comment>;           \
-            lispy  : /^/ <expr>* /$/ ;                          \
+            ToyLisp  : /^/ <expr>* /$/ ;                          \
             ",
-            Number, Symbol, String, Comment, Sexpr, Qexpr, Expr, Lispy);
+            Number, Symbol, String, Comment, Sexpr, Qexpr, Expr, ToyLisp);
 
     lenv* e = lenv_new();
     lenv_add_builtins(e);
     if (1 == argc) {
-        puts("Lispy Version0.7");
+        puts("ToyLisp Version0.7");
         puts("Press Ctrl+C to Exit\n");
         while (1) {
 
-            char* input = readline("lispy> ");
+            char* input = readline("ToyLisp> ");
             add_history(input);
 
             mpc_result_t r;
-            if (mpc_parse("<stdin>", input, Lispy, &r)) {
+            if (mpc_parse("<stdin>", input, ToyLisp, &r)) {
                 lval* x = lval_eval(e, lval_read(r.output));
                 lval_println(x);
                 lval_del(x);
@@ -1054,7 +1054,7 @@ int main(int argc, char** argv) {
     }
     lenv_del(e);
 
-    mpc_cleanup(8, Number, Symbol, String, Comment, Sexpr, Qexpr, Expr, Lispy);
+    mpc_cleanup(8, Number, Symbol, String, Comment, Sexpr, Qexpr, Expr, ToyLisp);
 
     return 0;
 }

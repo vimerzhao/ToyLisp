@@ -1,5 +1,106 @@
 # ToyLisp
-ToyLisp is an interpreter(written in C) for basic Lisp,which include evaluation, S-expressions,Q-epxressions,variables,functions,conditionals and strings.[Click Here](./Manual.md)for more information.
+ToyLisp is an interpreter(written in C) for Lisp,which include evaluations, S-expressions,Q-expressions,variables,functions,conditionals and strings.Read [Manual](./Manual.md)for more information.
 
-# Extension
+# Basic
+## Evaluations
+```
+ToyLisp> + (/ 10 2) (- 5 1) (* 3 4)
+21
+ToyLisp> (/ 10 2)
+5
+ToyLisp> / 4 0
+Error: Division By Zero.
+```
+
+## Q-Expressions
+```
+ToyLisp> {1 2 4}
+{1 2 4}
+ToyLisp> {+ 2 4 5}
+{+ 2 4 5}
+```
+ToyLisp offer some basic built-in functions(`list`,`head`,`tail`,`eval`,`join`):
+
+```
+ToyLisp> list 1 2 3 5
+{1 2 3 5}
+ToyLisp> (head (list 1 2 3 5))
+{1}
+ToyLisp> (tail {1 2 3 5})
+{2 3 5}
+ToyLisp> (eval (head {(+ 1 2) (* 1 2)}))
+3
+ToyLisp> head {+ 1 2}
+{+}
+ToyLisp> ((eval (head {+ 1 2 3})) 1 2 3)
+6
+ToyLisp> join {1 2} {3 4}
+{1 2 3 4}
+```
+
+## Variables
+```
+ToyLisp> def {a b} 10 20
+()
+ToyLisp> (* a b)
+200
+ToyLisp> * x y
+Error: Unbound Symbol 'x'
+ToyLisp> def {x y} a b
+()
+ToyLisp> (+ x y)
+30
+```
+
+## Functions
+Lambda expression:
+```
+ToyLisp> (\ {x y} {+ x y}) 10 20
+30
+```
+
+`def` functions:
+```
+ToyLisp> def {add} (\ {x y} {+ x y})
+()
+ToyLisp> add 10 20
+30
+```
+
+## Conditionals
+```
+ToyLisp> def {x y} 1 2
+()
+ToyLisp> == x y
+0
+ToyLisp> <= x y
+1
+ToyLisp> >= 3 x
+1
+ToyLisp> != {} 1
+1
+ToyLisp> if (!= x y) {+ x y} {* x y}
+3
+```
+
+## Strings
+```
+ToyLisp> "hello world!"
+"hello world!"
+ToyLisp> print "hello world!"
+"hello world!"
+()
+ToyLisp> load "src/example.tl" ;comments:load file
+"Hello World!"
+()
+```
+
+## Extension
+See [standard_lib.tl]()(ToyLisp's standard library)for more awesome example about using ToyLisp!!!
+
+# Future
+
+
+# Acknowledge
+ToyLisp comes from [Build Your Own Lisp](http://www.buildyourownlisp.com/contents),a remarkable book written by [Daniel Holden](https://github.com/orangeduck).
 
