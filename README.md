@@ -1,5 +1,15 @@
 # ToyLisp
-ToyLisp is an interpreter(written in C) for Lisp,which include evaluations, S-expressions,Q-expressions,variables,functions,conditionals and strings.Read [Manual](./Manual.md)for more information.
+ToyLisp is a lisp interpreter(written in C),which include:
+
+- Evaluations
+- S-expressions
+- Q-expressions
+- Variables
+- Functions
+- Conditionals
+- Strings.
+
+Read [Manual](./Manual.md)for more information.
 
 # Basic
 ## Evaluations
@@ -59,12 +69,20 @@ ToyLisp> (\ {x y} {+ x y}) 10 20
 30
 ```
 
-`def` functions:
+`def` functions and variable arguments:
 ```
 ToyLisp> def {add} (\ {x y} {+ x y})
 ()
-ToyLisp> add 10 20
-30
+ToyLisp> add 1 2
+3
+ToyLisp> add 1 2 3
+Error: Function passed too many arguments. Got 3, Expected 2.
+ToyLisp> def {add} (\ {x & y} {eval (join {+} (list x) y)})
+()
+ToyLisp> add 1 2 3
+6
+ToyLisp> add 1 2 3 4 5
+15
 ```
 
 ## Conditionals
@@ -95,8 +113,22 @@ ToyLisp> load "src/example.tl" ;comments:load file
 ()
 ```
 
-## Extension
-See [standard_lib.tl]()(ToyLisp's standard library)for more awesome example about using ToyLisp!!!
+## Standard Library
+The Standard Library offer more powerful built-in functions based on the core language features list above.For example:
+```
+ToyLisp> map (\ {x} {* x 2}) {1 2 3}
+{2 4 6}
+ToyLisp> filter (\ {x} {> x 2}) {0 4 2 3 1}
+{4 3}
+ToyLisp> sum {1 2 3 4 5}
+15
+ToyLisp> product {1 2 3 4 5}
+120
+ToyLisp> fib 5;Fibonacci
+5
+```
+
+Read the [source code](lib/stabdard\_lib.tl) to get more information.
 
 # Future
 

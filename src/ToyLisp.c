@@ -1013,6 +1013,11 @@ int main(int argc, char** argv) {
 
     lenv* e = lenv_new();
     lenv_add_builtins(e);
+
+
+    /* Load Library */
+    lval* std_lib = lval_add(lval_sexpr(), lval_str("lib/standard_lib.tl"));
+    builtin_load(e, std_lib);
     if (1 == argc) {
         puts("ToyLisp Version0.7");
         puts("Press Ctrl+C to Exit\n");
