@@ -143,7 +143,18 @@ ToyLisp> fib 5;Fibonacci
 Read the [source code](lib/standard_lib.tl) to get more information.
 
 # Future
-
+There still a lot of thing to do:
+- [ ] Native Types(`double` especially!).
+- [ ] User Defined Types.
+- [ ] List Literal.
+- [ ] Operating System Interaction.
+- [ ] Macros.
+- [ ] Variable Hashtable.
+- [ ] Pool Allocation.
+- [ ] Garbage Collection.
+- [ ] Tail Call Optimisation.
+- [ ] Lexical Scoping.
+- [ ] Static Typing.
 
 # Acknowledge
 ToyLisp comes from [Build Your Own Lisp](http://www.buildyourownlisp.com/contents),a remarkable book written by [Daniel Holden](https://github.com/orangeduck).
