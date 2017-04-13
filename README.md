@@ -9,6 +9,12 @@ ToyLisp is a lisp interpreter(written in C),which include:
 - Conditionals
 - Strings.
 
+How to compile the code:
+
+```
+gcc -std=c99 -Wall -o ToyLisp.out src/*.c -lm -ledit
+```
+
 Read [Manual](./Manual.md)for more information.
 
 # Basic
@@ -128,7 +134,7 @@ ToyLisp> fib 5;Fibonacci
 5
 ```
 
-Read the [source code](lib/stabdard\_lib.tl) to get more information.
+Read the [source code](lib/stabdar_lib.tl) to get more information.
 
 # Future
 
