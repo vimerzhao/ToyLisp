@@ -2,32 +2,15 @@
 #define TOYLISP_H_
 #include "mpc.h"
 
-/* cross-platform code */
-#ifdef _WIN32
-static char buffer[2048];
-char* readline(char* prompt) {
-    fputs(prompt, stdout);
-    fgets(buffer, 2048, stdin);
-    char* cpy = malloc(strlen(buffer)+1);
-    strcpy(cpy, buffer);
-    cpy[strlen(cpy)-1] = '\0';
-    return cpy;
-}
-void add_history(char* unused) {}
-#else
-#include <editline/readline.h>
-#include <editline/history.h>
-#endif
-
 /* Parser Declariations */
-mpc_parser_t* Number;
-mpc_parser_t* Symbol;
-mpc_parser_t* String;
-mpc_parser_t* Comment;
-mpc_parser_t* Sexpr;
-mpc_parser_t* Qexpr;
-mpc_parser_t* Expr;
-mpc_parser_t* ToyLisp;
+extern mpc_parser_t* Number;
+extern mpc_parser_t* Symbol;
+extern mpc_parser_t* String;
+extern mpc_parser_t* Comment;
+extern mpc_parser_t* Sexpr;
+extern mpc_parser_t* Qexpr;
+extern mpc_parser_t* Expr;
+extern mpc_parser_t* ToyLisp;
 
 
 /* Lisp Value Types */

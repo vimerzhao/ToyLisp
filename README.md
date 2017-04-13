@@ -1,4 +1,5 @@
 # ToyLisp
+## Features
 ToyLisp is a lisp interpreter(written in C),which include:
 
 - Evaluations
@@ -9,10 +10,15 @@ ToyLisp is a lisp interpreter(written in C),which include:
 - Conditionals
 - Strings.
 
-How to compile the code:
+## Compile code
+For Linux:
 
 ```
 gcc -std=c99 -Wall -o ToyLisp.out src/*.c -lm -ledit
+```
+For Windows:
+```
+gcc -std=c99 -Wall -o ToyLisp src/*.c -lm
 ```
 
 Read [Manual](./Manual.md) for more information.
